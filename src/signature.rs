@@ -11,11 +11,11 @@ use utils::bytes_to_hex_str;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Signature {
-    #[serde(serialize_with = "big_endian_int_serialize")]
+    //#[serde(serialize_with = "big_endian_int_serialize")]
     pub v: Uint256,
-    #[serde(serialize_with = "big_endian_int_serialize")]
+    //#[serde(serialize_with = "big_endian_int_serialize")]
     pub r: Uint256,
-    #[serde(serialize_with = "big_endian_int_serialize")]
+    //#[serde(serialize_with = "big_endian_int_serialize")]
     pub s: Uint256,
 }
 
