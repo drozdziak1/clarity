@@ -11,25 +11,10 @@ use utils::{hex_str_to_bytes, ByteDecodeError};
 ///
 /// Address is usually derived from a `PrivateKey`, or converted from its
 /// textual representation.
-#[derive(PartialEq, Debug, Clone, Eq, PartialOrd, Hash, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Eq, PartialOrd, Hash, Deserialize, Serialize)]
 pub struct Address {
     // TODO: address seems to be limited to 20 characters, but we keep it flexible
     data: Vec<u8>,
-}
-
-impl Serialize for Address {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        if *self == Address::default() {
-            // If the address is empty we can serialize it as empty value
-            serializer.serialize_bytes(&[])
-        } else {
-            // Here we serialize all bytes
-            serializer.serialize_bytes(&self.data)
-        }
-    }
 }
 
 impl Address {
