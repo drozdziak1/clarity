@@ -1,21 +1,34 @@
 use failure::Error;
-use serde::Serialize;
-use serde::Serializer;
-use std::fmt;
-use std::fmt::Write;
-use std::str;
-use std::str::FromStr;
-use utils::bytes_to_hex_str;
-use utils::{hex_str_to_bytes, ByteDecodeError};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+use std::{fmt, fmt::Write, str, str::FromStr};
+
+use utils::{bytes_to_hex_str, hex_str_to_bytes, ByteDecodeError};
 
 /// Representation of an Ethereum address.
 ///
 /// Address is usually derived from a `PrivateKey`, or converted from its
 /// textual representation.
-#[derive(PartialEq, Debug, Clone, Eq, PartialOrd, Ord, Hash, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Eq, PartialOrd, Ord, Hash)]
 pub struct Address {
     // TODO: address seems to be limited to 20 characters, but we keep it flexible
     data: Vec<u8>,
+}
+
+impl Address {
+    /// Creates new `Address` filled with zeros.
+    ///
+    /// The actual implementation of this doesn't really
+    /// creates the zeros. In our case we treat it as "empty"
+    /// address, which is then reperesented by zeros.
+    pub fn new() -> Address {
+        Address { data: Vec::new() }
+    }
+
+    /// Get raw bytes of the address.
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.data
+    }
 }
 
 impl Serialize for Address {
@@ -33,19 +46,12 @@ impl Serialize for Address {
     }
 }
 
-impl Address {
-    /// Creates new `Address` filled with zeros.
-    ///
-    /// The actual implementation of this doesn't really
-    /// creates the zeros. In our case we treat it as "empty"
-    /// address, which is then reperesented by zeros.
-    pub fn new() -> Address {
-        Address { data: Vec::new() }
-    }
-
-    /// Get raw bytes of the address.
-    pub fn as_bytes(&self) -> &[u8] {
-        &self.data
+impl<'de> Deserialize<'de> for Address {
+    fn deserialize<D>(d: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok((Vec::<u8>::deserialize(d)?).as_slice().into())
     }
 }
 
